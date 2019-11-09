@@ -5,29 +5,41 @@ function love.load()
     h = 60
     val = 0
     change = 0
+
     width, height = love.graphics.getDimensions()
-    --whale1 = love.graphics.newImage("whaleT.png")
-    --whale2 = love.graphics.newImage("whale2T.png")
     land1 = love.graphics.newImage("Land1.png")
-    --whale = whale1
+
+
     love.graphics.setBackgroundColor(1,1,1)
+
+    --Grabs the pngs to sue as sprites within the window
     GreenS = love.graphics.newImage("GreenS.png")
     WhiteS = love.graphics.newImage("WhiteS.png")
     GreyS = love.graphics.newImage("GreyS.png")
     RedS = love.graphics.newImage("RedS.png")
     BrownS = love.graphics.newImage("BrownS.png")
-    --love.graphics.setColor(0,0,0)
-    startI = 0
+
+    startI = 0 --used to shift the viewing window along the matrix
+    
+    --used to move further right and left after the screen stops moving
     moreRight = 0
     moreLeft = 0
+
+    --How far right the matrix goes
     furthestRight = 50
+    furthestDown = 10
+
+    --position coordinates of the character in the matrix
+    xPos = 3
+    yPos = furthestDown - 2
    
+    --Creates a matrix that contains the game enviroment
     matrix = {}
     for i=0,furthestRight do
         matrix[i] = {}
-        for j=0,10 do
+        for j=0,furthestDown do
             matrix[i][j] = WhiteS
-            if j == 9 or j == 10 then
+            if j == furthestDown-1 or j == furthestDown then
                 matrix[i][j] = GreenS
                 if i == furthestRight then
                     matrix[i][j] = RedS
@@ -36,39 +48,23 @@ function love.load()
                     matrix[i][j] = BrownS
                 end
             end
-            if j == 8 and i == 3 then
-                matrix[i][j] = GreyS
+            if j == yPos and i == xPos then
+                matrix[xPos][yPos] = GreyS
             end
         end
     end
-
-
 end
 
-function love.update(dt)
-    w = w + 1
-    h = h + 1
 
+function love.update(dt)
+
+    --Restrains FPS
     if dt < 1/10 then
         love.timer.sleep(1/10 - dt)
     end
 
+    --moves the character left along the matrix
     if love.keyboard.isDown("left") then
-        x = x - 1
-        if val == 0 then
-            whale = whale1
-            change = 1
-        end
-        if val == 1 then
-            whale = whale2
-            change = -1
-        end
-
-        val = val + change
-        --love.timer.sleep(1)
-        --whale = whale2
-        --love.timer.sleep(1)
-
         if startI > 0 and moreRight == 0 then
             startI = startI - 1
             matrix[3+startI][8] = GreyS
@@ -92,11 +88,8 @@ function love.update(dt)
         end
     end
 
+    --moves the chacter right along the matrix
     if love.keyboard.isDown("right") then
-        --x = x + 1
-        --whale = whale1
-        --love.graphics.print(x,50,50)
-
         if startI < furthestRight - 10 and moreLeft == 0 then
             startI = startI + 1
             matrix[3+startI][8] = GreyS
@@ -119,10 +112,14 @@ function love.update(dt)
             end
         end
     end
+
+    --moves the character up
+    if love.keyboard.isDown("up") then
+
+    end
 end
 
 function love.draw()
-    --love.graphics.setColor(0,0.4,0.4)
     love.graphics.setBackgroundColor(.05,1,1)
     love.window.setTitle("TigerHacks 2019")
     
@@ -144,19 +141,14 @@ function love.draw()
 
     love.graphics.setColor(1,1,1)
     love.graphics.rectangle("fill",x,300,50,50)
-
-    --love.window.maximize()
-    --love.graphics.print("x",10,10)
-    --love.graphics.rectangle("fill",x,y,w,h)
-    --love.graphics.draw(whale2,100,100)
-    --love.graphics.setColor(0,0.4,0.4)
     love.graphics.print(x,200,200)
     love.graphics.print(change,200,220)
-    --love.graphics.draw(whale,50,50)
     love.graphics.print(width,100,100)
     love.graphics.print(height,100,120)
-    --love.graphics.draw(land1,200,200)
 
+
+
+    --draws the enviroment matrix
     love.graphics.setColor(0,0,0)
     for i=startI,startI+10 do
         for j=0,10 do
