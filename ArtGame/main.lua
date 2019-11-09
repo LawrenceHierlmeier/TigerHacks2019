@@ -67,23 +67,27 @@ function love.update(dt)
     if love.keyboard.isDown("left") then
         if startI > 0 and moreRight == 0 then
             startI = startI - 1
-            matrix[3+startI][8] = GreyS
-            matrix[3+startI+1][8] = WhiteS
+            matrix[xPos][yPos] = WhiteS
+            xPos = xPos - 1
+            matrix[xPos][yPos] = GreyS
         end
         if moreRight > 0 then
             moreRight = moreRight - 1
-            if matrix[furthestRight][8] ~= GreyS then
-                matrix[3+startI+moreRight][8] = GreyS
-                matrix[3+startI+moreRight+1][8] = WhiteS
+            if matrix[furthestRight][yPos] ~= GreyS then
+                matrix[xPos][yPos] = WhiteS
+                xPos = xPos - 1
+                matrix[xPos][yPos] = GreyS
             end
-            if matrix[furthestRight][8] == GreyS then
-                matrix[furthestRight-1][8] = GreyS
-                matrix[furthestRight][8] = WhiteS
+            if matrix[furthestRight][yPos] == GreyS then
+                matrix[furthestRight-1][yPos] = GreyS
+                matrix[furthestRight][yPos] = WhiteS
+                xPos = xPos -1
             end
         end
-        if startI == 0 and matrix[0][8] ~= GreyS then
-            matrix[3+moreLeft][8] = GreyS
-            matrix[3+moreLeft+1][8] = WhiteS
+        if startI == 0 and matrix[0][yPos] ~= GreyS then
+            matrix[xPos][yPos] = WhiteS
+            xPos = xPos - 1
+            matrix[xPos][yPos] = GreyS
             moreLeft = moreLeft - 1
         end
     end
@@ -92,23 +96,27 @@ function love.update(dt)
     if love.keyboard.isDown("right") then
         if startI < furthestRight - 10 and moreLeft == 0 then
             startI = startI + 1
-            matrix[3+startI][8] = GreyS
-            matrix[3+startI-1][8] = WhiteS
+            matrix[xPos][yPos] = WhiteS
+            xPos = xPos + 1
+            matrix[xPos][yPos] = GreyS
         end
-        if startI >= furthestRight - 10 and matrix[furthestRight][8] ~= GreyS then
-            matrix[3+startI+moreRight][8] = GreyS
-            matrix[3+startI+moreRight-1][8] = WhiteS
+        if startI >= furthestRight - 10 and matrix[furthestRight][yPos] ~= GreyS then
+            matrix[xPos][yPos] = WhiteS
+            xPos = xPos + 1
+            matrix[xPos][yPos] = GreyS
             moreRight = moreRight + 1
         end
         if moreLeft < 0 then
             moreLeft = moreLeft + 1
-            if matrix[0][8] ~= GreyS then
-                matrix[3+moreLeft][8] = GreyS
-                matrix[3+moreLeft-1][8] = WhiteS
+            if matrix[0][yPos] ~= GreyS then
+                matrix[xPos][yPos] = WhiteS
+                xPos = xPos + 1
+                matrix[xPos][yPos] = GreyS
             end
-            if matrix[0][8] == GreyS then
-                matrix[1][8] = GreyS
-                matrix[0][8] = WhiteS
+            if matrix[0][yPos] == GreyS then
+                matrix[1][yPos] = GreyS
+                matrix[0][yPos] = WhiteS
+                xPos = xPos + 1
             end
         end
     end
