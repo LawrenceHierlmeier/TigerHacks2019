@@ -17,23 +17,35 @@ function love.load()
 
     love.graphics.setBackgroundColor(1,1,1)
 
+    testMap = love.graphics.newImage("testMap.png")
+    testMapData = love.image.newImageData("testMap.png")
+    mapWidth, mapHeight = testMap:getDimensions()
+    --mapHeight = 100
+
     --Grabs the pngs to sue as sprites within the window
     GreenS = love.graphics.newImage("GreenS.png")
+    --r = 0.13333333333333  
+    --g = 0.69411764705882
+    --b = 0.29803921568627
+
     WhiteS = love.graphics.newImage("WhiteS.png")
     GreyS = love.graphics.newImage("GreyS.png")
     RedS = love.graphics.newImage("RedS.png")
     BrownS = love.graphics.newImage("BrownS.png")
     LightBlueS = love.graphics.newImage("LightBlueS.png")
 
-    startI = 0 --used to shift the viewing window along the matrix
-    
     --used to move further right and left after the screen stops moving
     moreRight = 0
     moreLeft = 0
 
     --How far right the matrix goes
-    furthestRight = 50
-    furthestDown = 10
+    furthestRight = mapWidth-1
+    furthestDown = mapHeight-1
+
+    startI = 0 --used to shift the viewing window along the matrix
+    startJ = furthestDown - 10
+
+    r,g,b,a = testMapData:getPixel(0,mapHeight-1)
 
     --position coordinates of the character in the matrix
     xPos = 3
@@ -65,11 +77,6 @@ function love.load()
             end
         end
     end
-
-    matrix[3][7] = GreenS
-    matrix[7][8] = GreenS
-    matrix[0][8] = GreenS
-    matrix[7][6] = LightBlueS
 end
 
 
@@ -216,7 +223,15 @@ function love.update(dt)
         jumpLog = 0
     end
 
-    matrix[7][6] = LightBlueS
+
+    --drops the character off a cloud if they press down oon one
+    if love.keyboard.isDown('down') then
+        if matrix[xPos][yPos+1] == LightBlueS then
+            matrix[xPos][yPos] = WhiteS
+            yPos = yPos + 2
+            matrix[xPos][yPos] = GreyS
+        end
+    end
 end
 
 function love.draw()
@@ -241,19 +256,27 @@ function love.draw()
 
     love.graphics.setColor(1,1,1)
     love.graphics.rectangle("fill",x,300,50,50)
+
+    love.graphics.setColor(0,0,0)
     love.graphics.print(x,200,200)
-    love.graphics.print(y,200,220)
-    love.graphics.print(width,100,100)
-    love.graphics.print(height,100,120)
+    love.graphics.print(mapWidth,200,220)
+    love.graphics.print(mapHeight,200,240)
+    love.graphics.print(r,200,260)
+    love.graphics.print(g,220,280)
+    love.graphics.print(b,240,300)
+
+    --love.graphics.print(width,100,100)
+    --love.graphics.print(height,100,120)
 
 
 
     --draws the enviroment matrix
     love.graphics.setColor(0,0,0)
     for i=startI,startI+10 do
-        for j=0,10 do
+        for j=startJ,startJ+10 do
             love.graphics.setColor(1,1,1)
-            love.graphics.draw(matrix[i][j],i*20-(20*startI),j*20)
+            love.graphics.draw(matrix[i][j],i*20-(20*startI),j*20-(20*startJ))
         end
     end
+
 end
