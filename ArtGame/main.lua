@@ -1,3 +1,8 @@
+--notes
+--currently have an "air jump" ability, where the character can jump while falling off a block higher than the ground below
+--could leave in or try and remove, will determine later
+
+
 function love.load()
     x = 100
     y = 20
@@ -18,6 +23,7 @@ function love.load()
     GreyS = love.graphics.newImage("GreyS.png")
     RedS = love.graphics.newImage("RedS.png")
     BrownS = love.graphics.newImage("BrownS.png")
+    LightBlueS = love.graphics.newImage("LightBlueS.png")
 
     startI = 0 --used to shift the viewing window along the matrix
     
@@ -32,6 +38,12 @@ function love.load()
     --position coordinates of the character in the matrix
     xPos = 3
     yPos = furthestDown - 2
+
+    --tracks where in t a jump the character is
+    jumpLog = 0
+    jumpLogChange = 1
+    UpDown = 1
+    actuallyJumped = 0
    
     --Creates a matrix that contains the game enviroment
     matrix = {}
@@ -53,6 +65,11 @@ function love.load()
             end
         end
     end
+
+    matrix[3][7] = GreenS
+    matrix[7][8] = GreenS
+    matrix[0][8] = GreenS
+    matrix[7][6] = LightBlueS
 end
 
 
@@ -65,26 +82,26 @@ function love.update(dt)
 
     --moves the character left along the matrix
     if love.keyboard.isDown("left") then
-        if startI > 0 and moreRight == 0 then
+        if startI > 0 and moreRight == 0 and matrix[xPos-1][yPos] ~= GreenS then
             startI = startI - 1
             matrix[xPos][yPos] = WhiteS
             xPos = xPos - 1
             matrix[xPos][yPos] = GreyS
         end
-        if moreRight > 0 then
+        if moreRight > 0 and matrix[xPos-1][yPos] ~= GreenS then
             moreRight = moreRight - 1
-            if matrix[furthestRight][yPos] ~= GreyS then
+            if matrix[furthestRight][yPos] ~= GreyS and matrix[xPos-1][yPos] ~= GreenS then
                 matrix[xPos][yPos] = WhiteS
                 xPos = xPos - 1
                 matrix[xPos][yPos] = GreyS
             end
-            if matrix[furthestRight][yPos] == GreyS then
+            if matrix[furthestRight][yPos] == GreyS and matrix[xPos-1][yPos] ~= GreenS then
                 matrix[furthestRight-1][yPos] = GreyS
                 matrix[furthestRight][yPos] = WhiteS
                 xPos = xPos -1
             end
         end
-        if startI == 0 and matrix[0][yPos] ~= GreyS then
+        if startI == 0 and matrix[0][yPos] ~= GreyS and matrix[xPos-1][yPos] ~= GreenS then
             matrix[xPos][yPos] = WhiteS
             xPos = xPos - 1
             matrix[xPos][yPos] = GreyS
@@ -94,26 +111,26 @@ function love.update(dt)
 
     --moves the chacter right along the matrix
     if love.keyboard.isDown("right") then
-        if startI < furthestRight - 10 and moreLeft == 0 then
+        if startI < furthestRight - 10 and moreLeft == 0 and matrix[xPos+1][yPos] ~= GreenS then
             startI = startI + 1
             matrix[xPos][yPos] = WhiteS
             xPos = xPos + 1
             matrix[xPos][yPos] = GreyS
         end
-        if startI >= furthestRight - 10 and matrix[furthestRight][yPos] ~= GreyS then
+        if startI >= furthestRight - 10 and matrix[furthestRight][yPos] ~= GreyS and matrix[xPos+1][yPos] ~= GreenS then
             matrix[xPos][yPos] = WhiteS
             xPos = xPos + 1
             matrix[xPos][yPos] = GreyS
             moreRight = moreRight + 1
         end
-        if moreLeft < 0 then
+        if moreLeft < 0 and matrix[xPos+1][yPos] ~= GreenS then
             moreLeft = moreLeft + 1
-            if matrix[0][yPos] ~= GreyS then
+            if matrix[0][yPos] ~= GreyS and matrix[xPos+1][yPos] ~= GreenS then
                 matrix[xPos][yPos] = WhiteS
                 xPos = xPos + 1
                 matrix[xPos][yPos] = GreyS
             end
-            if matrix[0][yPos] == GreyS then
+            if matrix[0][yPos] == GreyS and matrix[xPos+1][yPos] ~= GreenS then
                 matrix[1][yPos] = GreyS
                 matrix[0][yPos] = WhiteS
                 xPos = xPos + 1
@@ -122,9 +139,84 @@ function love.update(dt)
     end
 
     --moves the character up
-    if love.keyboard.isDown("up") then
+    if love.keyboard.isDown('up') then
+        actuallyJumped = 0
+        y = y + 1
+        if jumpLog == 0 and matrix[xPos][yPos-1] ~= GreenS then
+            matrix[xPos][yPos] = WhiteS
+            yPos = yPos - UpDown
+            matrix[xPos][yPos] = GreyS
+            actuallyJumped = 1
+        end
+        if jumpLog == 1 and matrix[xPos][yPos-1] ~= GreenS then
+            matrix[xPos][yPos] = WhiteS
+            yPos = yPos - UpDown
+            matrix[xPos][yPos] = GreyS
+            actuallyJumped = 1
+            if matrix[xPos][yPos+1] == GreenS or matrix[xPos][yPos+1] == LightBlueS then
+                jumpLog = 0
+            end
+        end
+        if jumpLog == 2 and matrix[xPos][yPos-1] ~= GreenS then
+            matrix[xPos][yPos] = WhiteS
+            yPos = yPos - UpDown
+            matrix[xPos][yPos] = GreyS
+            actuallyJumped = 1
+            if matrix[xPos][yPos+1] == GreenS or matrix[xPos][yPos+1] == LightBlueS then
+                jumpLog = 0
+            end
+        end
+        if jumpLog == 3 and matrix[xPos][yPos-1] ~= GreenS then
+            matrix[xPos][yPos] = WhiteS
+            yPos = yPos - UpDown
+            matrix[xPos][yPos] = GreyS
+            actuallyJumped = 1
+            if matrix[xPos][yPos+1] == GreenS or matrix[xPos][yPos+1] == LightBlueS then
+                jumpLog = 0
+            end
+        end
+        if jumpLog == 4 and matrix[xPos][yPos-1] ~= GreenS then
+            matrix[xPos][yPos] = WhiteS
+            yPos = yPos - UpDown
+            matrix[xPos][yPos] = GreyS
+            actuallyJumped = 1
+            if matrix[xPos][yPos+1] == GreenS or matrix[xPos][yPos+1] == LightBlueS then
+                jumpLog = 0
+            end
+        end
 
+        if jumpLog < 4 and UpDown == 1 and actuallyJumped == 1 then
+            jumpLog = jumpLog + jumpLogChange
+        end
+        if jumpLog == 4 then
+            UpDown = -1
+        end
+        if jumpLog > -1 and UpDown == -1 then
+            jumpLog = jumpLog - jumpLogChange
+        end
+        if jumpLog == -1 then
+            UpDown = 1
+        end
+
+        if jumpLog == -1 and (matrix[xPos][yPos+1] ~= GreenS and matrix[xPos][yPos+1] ~= LightBlueS) and (matrix[xPos][yPos+1] ~= GreenS or matrix[xPos][yPos+1] ~= LightBlueS) then
+            matrix[xPos][yPos] = WhiteS
+            yPos = yPos + 1
+            matrix[xPos][yPos] = GreyS
+        end
     end
+
+    --checks if the charater is on the ground
+    if not love.keyboard.isDown('up') then
+        if (matrix[xPos][yPos+1] ~= GreenS and matrix[xPos][yPos+1] ~= LightBlueS) and (matrix[xPos][yPos+1] ~= GreenS or matrix[xPos][yPos+1] ~= LightBlueS) then
+            matrix[xPos][yPos] = WhiteS
+            yPos = yPos + 1
+            matrix[xPos][yPos] = GreyS
+        end
+        UpDown = 1
+        jumpLog = 0
+    end
+
+    matrix[7][6] = LightBlueS
 end
 
 function love.draw()
@@ -150,7 +242,7 @@ function love.draw()
     love.graphics.setColor(1,1,1)
     love.graphics.rectangle("fill",x,300,50,50)
     love.graphics.print(x,200,200)
-    love.graphics.print(change,200,220)
+    love.graphics.print(y,200,220)
     love.graphics.print(width,100,100)
     love.graphics.print(height,100,120)
 
