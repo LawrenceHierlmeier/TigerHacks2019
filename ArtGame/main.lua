@@ -77,6 +77,11 @@ function love.load()
             end
         end
     end
+
+    matrix[3][7] = GreenS
+    matrix[7][8] = GreenS
+    matrix[0][8] = GreenS
+    matrix[7][6] = LightBlueS
 end
 
 
@@ -204,12 +209,41 @@ function love.update(dt)
         if jumpLog == -1 then
             UpDown = 1
         end
+<<<<<<< HEAD
 
         if jumpLog == -1 and (matrix[xPos][yPos+1] ~= GreenS and matrix[xPos][yPos+1] ~= LightBlueS) and (matrix[xPos][yPos+1] ~= GreenS or matrix[xPos][yPos+1] ~= LightBlueS) then
             matrix[xPos][yPos] = WhiteS
             yPos = yPos + 1
             matrix[xPos][yPos] = GreyS
         end
+    end
+
+    --checks if the charater is on the ground
+    if not love.keyboard.isDown('up') then
+        if (matrix[xPos][yPos+1] ~= GreenS and matrix[xPos][yPos+1] ~= LightBlueS) and (matrix[xPos][yPos+1] ~= GreenS or matrix[xPos][yPos+1] ~= LightBlueS) then
+=======
+
+        if jumpLog == -1 and (matrix[xPos][yPos+1] ~= GreenS and matrix[xPos][yPos+1] ~= LightBlueS) and (matrix[xPos][yPos+1] ~= GreenS or matrix[xPos][yPos+1] ~= LightBlueS) then
+>>>>>>> ec74a8efedb5c37dbfa88520f7103f36ddbdfd3e
+            matrix[xPos][yPos] = WhiteS
+            yPos = yPos + 1
+            matrix[xPos][yPos] = GreyS
+        end
+<<<<<<< HEAD
+        UpDown = 1
+        jumpLog = 0
+    end
+
+
+    --drops the character off a cloud if they press down oon one
+    if love.keyboard.isDown('down') then
+        if matrix[xPos][yPos+1] == LightBlueS then
+            matrix[xPos][yPos] = WhiteS
+            yPos = yPos + 2
+            matrix[xPos][yPos] = GreyS
+        end
+=======
+>>>>>>> ec74a8efedb5c37dbfa88520f7103f36ddbdfd3e
     end
 
     --checks if the charater is on the ground
@@ -223,15 +257,7 @@ function love.update(dt)
         jumpLog = 0
     end
 
-
-    --drops the character off a cloud if they press down oon one
-    if love.keyboard.isDown('down') then
-        if matrix[xPos][yPos+1] == LightBlueS then
-            matrix[xPos][yPos] = WhiteS
-            yPos = yPos + 2
-            matrix[xPos][yPos] = GreyS
-        end
-    end
+    matrix[7][6] = LightBlueS
 end
 
 function love.draw()
@@ -259,6 +285,7 @@ function love.draw()
 
     love.graphics.setColor(0,0,0)
     love.graphics.print(x,200,200)
+<<<<<<< HEAD
     love.graphics.print(mapWidth,200,220)
     love.graphics.print(mapHeight,200,240)
     love.graphics.print(r,200,260)
@@ -267,6 +294,11 @@ function love.draw()
 
     --love.graphics.print(width,100,100)
     --love.graphics.print(height,100,120)
+=======
+    love.graphics.print(y,200,220)
+    love.graphics.print(width,100,100)
+    love.graphics.print(height,100,120)
+>>>>>>> ec74a8efedb5c37dbfa88520f7103f36ddbdfd3e
 
 
 
